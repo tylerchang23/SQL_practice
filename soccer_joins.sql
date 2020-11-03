@@ -211,3 +211,119 @@ WHERE b.stop2_sec = (
     FROM match_mast b
 )
 
+/* 22) Write a query in SQL to find the matches ending with a goalless draw in group stage of play */
+SELECT DISTINCT m.match_no
+FROM match_details m
+WHERE m.play_stage = 'G'
+AND m.win_lose = 'D'
+AND m.goal_score = 0
+
+/* 23) Write a query in SQL to find the match no. and the teams played in that match where the 2nd highest stoppage time had been added in the 2nd half of play. */
+SELECT a.match_no, c.country_name
+FROM match_mast a
+JOIN match_details b
+ON a.match_no = b.match_no
+JOIN soccer_country c
+ON b.team_id = c.country_id
+WHERE a.stop2_sec  = (
+    SELECT MAX(a.stop2_sec)
+    FROM match_mast a
+    WHERE a.stop2_sec NOT IN (
+        SELECT MAX(a.stop2_sec)
+        FROM match_mast a
+    )
+)
+
+/* 26) Write a query in SQL to find the oldest player to have appeared in a EURO cup 2016 match */
+SELECT p.player_name, s.country_name, p.dt_of_bir
+FROM player_mast p
+JOIN soccer_country s
+ON p.team_id = s.country_id
+WHERE p.dt_of_bir = (
+    SELECT MIN(p.dt_of_bir)
+    FROM player_mast p
+)
+
+/* 27) Write a query in SQL to find those teams which scored three goals in a single game at this tournament. */
+SELECT DISTINCT s.country_name
+FROM soccer_country s
+JOIN match_details m
+ON s.country_id = m.team_id
+WHERE m.goal_score = 3
+
+/* 28) Write a query in SQL to find the teams with other information that finished bottom of their respective groups after conceding four times in three games. */
+SELECT b.country_name
+FROM soccer_country b 
+JOIN soccer_team a
+ON b.country_id = a.team_id
+WHERE a.goal_agnst = 4 
+AND a.group_position = 4
+
+/* 29) Write a query in SQL to find those three players with other information, who contracted to Lyon participated in the EURO cup 2016 Finals */
+SELECT DISTINCT p.player_name, s.country_name, m.play_stage
+FROM player_mast p
+JOIN soccer_country s
+ON p.team_id = s.country_id
+JOIN match_details m
+ON p.team_id = m.team_id
+WHERE p.playing_club = 'Lyon'
+AND m.play_stage = 'F'
+
+/* 30) Write a query in SQL to find the final four teams in the tournament */
+SELECT s.country_name
+FROM soccer_country s
+JOIN match_details m
+ON s.country_id = m.team_id
+WHERE m.play_stage = 'S'
+
+/* 31) Write a query in SQL to find the captains for the top four teams with other information which participated in the semifinals (match 48 and 49) in the tournament. */
+SELECT DISTINCT s.country_name, p.player_name
+FROM soccer_country s
+JOIN match_captain m
+ON s.country_id = m.team_id
+JOIN player_mast p
+ON m.player_captain = p.player_id
+WHERE m.match_no IN (48,49)
+
+/* 32) Write a query in SQL to find the captains with other information for all the matches in the tournament. */
+SELECT DISTINCT s.country_name, p.player_name
+FROM soccer_country s
+JOIN match_captain m
+ON s.country_id = m.team_id
+JOIN player_mast p
+ON m.player_captain = p.player_id
+
+/* 33) Write a query in SQL to find the captain and goal keeper with other information for all the matches for all the team. */
+SELECT a.country_name
+FROM soccer_country a
+JOIN match_captain b
+ON a.country_id = b.team_id
+JOIN player_mast c
+ON b.player_captain = c.player_id
+WHERE c.posi_to_play = 'GK'
+
+/* 34) Write a query in SQL to find the player who was selected for the Man of the Match Award in the finals of EURO cup 2016. */
+SELECT s.country_name, p.player_name, m.play_stage
+FROM soccer_country s
+JOIN player_mast p
+ON s.country_id = p.team_id
+JOIN match_mast m
+ON p.player_id = m.plr_of_match
+WHERE m.play_stage = 'F'
+
+/* 35) Write a query in SQL to find the substitute players who came into the field in the first half of play within normal play schedule */
+SELECT DISTINCT a.in_out, a.play_schedule, a.play_half, b.player_name
+FROM player_in_out a
+JOIN player_mast b
+ON a.player_id = b.player_id
+WHERE a.in_out = 'I'
+AND a.play_schedule = 'NT'
+AND a.play_half = 1
+
+/* 36) Write a query in SQL to prepare a list for the player of the match against each match.   */
+SELECT m.plr_of_match, p.player_name, s.country_name
+FROM match_mast m
+JOIN player_mast p
+ON m.plr_of_match = p.player_id
+JOIN soccer_country s
+ON p.team_id = s.country_id
