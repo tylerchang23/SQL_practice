@@ -215,3 +215,38 @@ from department
 group by id
 order by id
 /* - - - - - - - - - -  */
+
+/* Department Highest Salary 
+https://leetcode.com/problems/department-highest-salary/ */
+
+/* Solution /*
+/* First we figure out the max salary for each department and save as a CTE */
+/* Then we add this "max_dep_salary" field back to the original table and figure out which employees for */
+/* a given department have this salary. */
+
+WITH topDep AS (
+SELECT DepartmentId, MAX(salary) AS top_sal
+FROM Employee
+GROUP BY DepartmentId)
+
+SELECT d.Name AS 'Department', e.Name AS 'Employee', e.Salary
+FROM Employee e
+JOIN Department d
+ON e.DepartmentId = d.Id
+JOIN topDep t
+ON e.DepartmentId = t.DepartmentId
+WHERE e.Salary = t.top_Sal
+/* - - - - - - - - - -  */
+
+/* Delete Duplicate Emails
+https://leetcode.com/problems/delete-duplicate-emails/ */
+
+/* Solution */
+/* In order to compare emails, we need to self-join the table, then delete the duplicates. */
+
+DELETE p1
+FROM Person p1, Person p2
+WHERE p1.Email = p2.Email
+AND p1.Id > p2.Id
+
+/* - - - - - - - - - -  */
