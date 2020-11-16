@@ -250,3 +250,32 @@ WHERE p1.Email = p2.Email
 AND p1.Id > p2.Id
 
 /* - - - - - - - - - -  */
+
+/* Average Salary Departments vs Company 
+https://leetcode.com/problems/average-salary-departments-vs-company/ */
+
+/* Solution */
+/* First find the company's average salary by month (companyAvg) */
+/* Then figure out each department's average by month via double group by (depAvg) */
+/* Then compare the company's average to a departments average for a given month, and insert. */
+
+WITH companyAvg AS (
+SELECT date_format(pay_date, '%Y-%m') AS pay_date, AVG(amount) AS cAvg
+FROM salary
+GROUP BY date_format(pay_date, '%Y-%m') ),
+depAvg AS (
+SELECT date_format(s.pay_date, '%Y-%m') AS pay_date, e.department_id, AVG(s.amount) AS dAvg
+FROM salary s
+JOIN employee e
+ON s.employee_id = e.employee_id
+GROUP BY e.department_id, date_format(s.pay_date, '%Y-%m'))
+
+SELECT d.pay_date AS 'pay_month', d.department_id,
+CASE
+    WHEN c.cAvg < d.dAvg THEN 'higher'
+    WHEN c.cAvg > d.dAvg THEN 'lower'
+    WHEN c.cAvg = d.dAvg THEN 'same'
+END AS 'comparison'
+FROM depAvg d
+JOIN companyAvg c
+ON d.pay_date = c.pay_date
