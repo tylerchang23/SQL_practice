@@ -279,3 +279,34 @@ END AS 'comparison'
 FROM depAvg d
 JOIN companyAvg c
 ON d.pay_date = c.pay_date
+
+/* - - - - - - - - - -  */
+
+/* Consecutive Numbers
+https://leetcode.com/problems/consecutive-numbers/ */
+
+/* Solution */
+/* Here we need to self join the table 3 times in order to compare 3 consecutive rows. */
+/* Then we simply condition the table so that: 1) We're looking at three consecutive rows, */
+/* 2) They all have the same number. We also need to throw a DISTINCT clause so that we */
+/* output a single number if it happens to show up consecutively more than once. */
+
+SELECT DISTINCT tbl1.Num AS 'ConsecutiveNums'
+FROM Logs tbl1, Logs tbl2, Logs tbl3
+WHERE (tbl1.id = tbl2.id + 1 AND tbl2.id = tbl3.id + 1)
+AND (tbl1.Num = tbl2.Num AND tbl2.Num = tbl3.Num)
+
+/* - - - - - - - - - -  */
+
+/* Find Users With Valid E-mails
+https://leetcode.com/problems/find-users-with-valid-e-mails/ */
+
+/* Solution */
+/* Here we'll need to use a regular expression /*
+/* ^[A-Z] -> The first character must start with a letter */
+/* [A-Z0-9_.-]* -> Give any number of letters, numbers, underscores, periods, or dashes */
+/* @leetcode.com -> All emails need to end like this */
+
+SELECT *
+FROM Users
+WHERE mail REGEXP '^[A-Z][A-Z0-9_.-]*@leetcode.com$'
