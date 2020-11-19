@@ -310,3 +310,48 @@ https://leetcode.com/problems/find-users-with-valid-e-mails/ */
 SELECT *
 FROM Users
 WHERE mail REGEXP '^[A-Z][A-Z0-9_.-]*@leetcode.com$'
+
+/* - - - - - - - - - -  */
+
+/* Swap Salary 
+https://leetcode.com/problems/swap-salary/ */
+
+/* Solution */
+/* We only need to account for two cases here: When it's 'm' THEN 'f', when it's 'f' THEN 'm'*/
+
+UPDATE salary
+SET sex = CASE sex
+WHEN 'm' THEN 'f'
+WHEN 'f' THEN 'm'
+END
+
+/* - - - - - - - - - -  */
+
+/* Activity Participants
+https://leetcode.com/problems/activity-participants/ */
+
+/* Solution */
+/* We need to get the activity that doesn't have the max number of participants AND the min number. */
+/* After aggregating with the GROUP BY, we filter out the results that satisfy these conditions. */
+/* The hard part is trying to do a MAX(COUNT(*))/MIN(COUNT(*)). Since we can't perform an aggregate */ 
+/* function on another aggregate function, we can work around it by counting the values in a separate table */
+
+SELECT activity
+FROM Friends
+GROUP BY activity
+HAVING COUNT(activity) <> (
+    SELECT MAX(x.c)
+    FROM (
+        SELECT COUNT(activity) c 
+        FROM Friends f
+        GROUP BY activity
+    ) x
+)
+AND COUNT(activity) <> (
+    SELECT MIN(x.c)
+    FROM (
+        SELECT COUNT(activity) c 
+        FROM Friends f
+        GROUP BY activity
+    ) x
+)
