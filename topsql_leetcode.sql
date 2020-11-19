@@ -355,3 +355,49 @@ AND COUNT(activity) <> (
         GROUP BY activity
     ) x
 )
+
+/* - - - - - - - - - -  */
+
+/* Immediate Food Delivery
+https://leetcode.com/problems/immediate-food-delivery-i/ */
+
+/* Solution */
+/* The percentage of immediate orders is the number (COUNT) of orders that have an order date that is the same */
+/* as the customer's preferred date, divided by the number of distinct orders total. */
+
+SELECT ROUND((SELECT COUNT(order_date) FROM Delivery WHERE order_date = customer_pref_delivery_date) / COUNT(DISTINCT delivery_id) * 100, 2) AS 'immediate_percentage'
+FROM Delivery
+
+/* All People Report to the Given Manager
+https://leetcode.com/problems/all-people-report-to-the-given-manager/ */
+
+/* Subquery solution) */
+/* First we need to check if you work directly under the head. */
+/* Then check if report indirectly under the head- two ways. */
+/* 1) Either your manager works directly under the head. */
+/* 2) Or your manager's manager works directly under the head. */
+
+SELECT employee_id
+FROM employees
+WHERE employee_id IN (
+    SELECT employee_id 
+    FROM employees
+    /* Checks if you are a manager that reports DIRECTLY under the head */
+    WHERE employee_id IN (
+        SELECT employee_id
+        FROM Employees
+        WHERE manager_id = 1 AND employee_id <> 1) )
+    /* Checks if you report INDIRECTLY under the head */
+    OR manager_id IN (
+        SELECT employee_id 
+        FROM employees
+        /* Checks if your manager works directly under the head */
+        WHERE employee_id IN (
+            SELECT employee_id
+            FROM Employees
+            WHERE manager_id = 1 AND employee_id <> 1) 
+        /* Checks if your manager's manager works under the head */
+        OR manager_id IN (
+            SELECT employee_id
+            FROM Employees
+            WHERE manager_id = 1 AND employee_id <> 1))
