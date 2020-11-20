@@ -401,3 +401,19 @@ WHERE employee_id IN (
             SELECT employee_id
             FROM Employees
             WHERE manager_id = 1 AND employee_id <> 1))
+
+/* Triangle Judgement 
+https://leetcode.com/problems/triangle-judgement/ */
+
+/* Solution */
+/* Three sides make a triangle if the the sum of all possible combinations of two sides is greater than */
+/* the third one */
+
+SELECT x,y,z,
+CASE
+    WHEN x+y>z THEN 'Yes'
+    WHEN x+z>y THEN 'Yes'
+    WHEN y+z>x THEN 'Yes'
+    ELSE 'No'
+END AS 'triangle'
+FROM triangle
