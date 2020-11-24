@@ -368,6 +368,8 @@ https://leetcode.com/problems/immediate-food-delivery-i/ */
 SELECT ROUND((SELECT COUNT(order_date) FROM Delivery WHERE order_date = customer_pref_delivery_date) / COUNT(DISTINCT delivery_id) * 100, 2) AS 'immediate_percentage'
 FROM Delivery
 
+/* - - - - - - - - - -  */
+
 /* All People Report to the Given Manager
 https://leetcode.com/problems/all-people-report-to-the-given-manager/ */
 
@@ -402,6 +404,8 @@ WHERE employee_id IN (
             FROM Employees
             WHERE manager_id = 1 AND employee_id <> 1))
 
+/* - - - - - - - - - -  */
+
 /* Triangle Judgement 
 https://leetcode.com/problems/triangle-judgement/ */
 
@@ -417,3 +421,36 @@ CASE
     ELSE 'No'
 END AS 'triangle'
 FROM triangle
+
+/* - - - - - - - - - -  */
+
+/* Rising Temperature 
+https://leetcode.com/problems/rising-temperature/ */
+
+/* Solution */
+/* We need to do a self join in order to compare two values in the same field. */
+/* Join where the difference between two dates is one (i.e. look at today and yesterday) */
+/* Then take the values where the temperature was higher in the latter */
+
+SELECT w1.id AS 'Id'
+FROM Weather w1
+JOIN Weather w2
+ON DATEDIFF(w1.recordDate, w2.recordDate) = 1
+AND w1.Temperature > w2.Temperature
+
+/* - - - - - - - - - -  */
+
+/* Customers Who Never Order 
+https://leetcode.com/problems/customers-who-never-order/ */
+
+/* Solution */
+/* A customer didn't order if their Id isn't in the Orders table */
+
+SELECT c.Name AS 'Customers'
+from Customers c
+WHERE Id NOT IN (
+    SELECT CustomerId
+    FROM Orders
+)
+
+/* - - - - - - - - - -  */
