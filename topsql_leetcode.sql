@@ -454,3 +454,40 @@ WHERE Id NOT IN (
 )
 
 /* - - - - - - - - - -  */
+
+/* Students With Invalid Departments 
+https://leetcode.com/problems/students-with-invalid-departments/ */
+
+/* Solution */
+/* Here, our main assumption is that the Departments table only has IDs that are valid. */
+/* Therefore, any student with a class that isn't in the Departments table is indeed invalid. */
+
+SELECT s.id, s.name
+FROM Students s
+WHERE s.department_id NOT IN (
+    SELECT d.id
+    FROM Departments d
+)
+
+/* - - - - - - - - - - */
+
+/* List the Products Ordered in a Period 
+https://leetcode.com/problems/list-the-products-ordered-in-a-period/ */
+
+/* Solution */
+/* Here the two conditions we need to account for are total number of units and the date. */
+/* However, we need to set these conditions at different times because of the nature of aggregate */
+/* functions in SQL. We could have set a filter for date with either a WHERE or HAVING clause, because
+/* it doesn't really matter when we take out the rows that don't satisfy this particular condition */
+/* We need to use a HAVING clause for total number of units because we want to filter out the rows */
+/* AFTER we added up all of the units. */
+
+SELECT p.product_name, SUM(o.unit) AS 'unit'
+FROM Products p
+RIGHT JOIN Orders o
+ON p.product_id = o.product_id
+WHERE (o.order_date BETWEEN '2020-02-01' AND '2020-02-29')
+GROUP BY o.product_id
+HAVING SUM(o.unit) >= 100
+
+/* - - - - - - - - - - */
