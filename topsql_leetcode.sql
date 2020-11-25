@@ -491,3 +491,37 @@ GROUP BY o.product_id
 HAVING SUM(o.unit) >= 100
 
 /* - - - - - - - - - - */
+
+/* Not Boring Movies
+https://leetcode.com/problems/not-boring-movies/submissions/ */
+
+/* Solution */
+/* An id is odd if when divided by 2, it has a remainder of 1 */
+
+SELECT *
+FROM cinema 
+WHERE description <> 'boring'
+AND (id % 2) = 1
+ORDER BY rating DESC
+
+/* - - - - - - - - - - */
+
+/* New Users Daily Count
+https://leetcode.com/problems/new-users-daily-count/ */
+
+/* Solution */
+/* First we need to figure out what the first login date is for each user. */
+/* AFTER we figure out the first login date, we then check if it falls between the interval. */
+/* Then we count how many users logged in for a given day. */
+
+WITH initialLogin AS (
+    SELECT user_id, MIN(activity_date) AS firstLogin
+    FROM Traffic
+    WHERE activity = 'login'
+    GROUP BY user_id
+    HAVING firstLogin BETWEEN date_add('2019-06-30', INTERVAL -90 DAY) AND '2019-06-30'
+)
+
+SELECT firstLogin AS login_date, COUNT(user_id) AS user_count
+FROM initialLogin
+GROUP BY firstLogin
